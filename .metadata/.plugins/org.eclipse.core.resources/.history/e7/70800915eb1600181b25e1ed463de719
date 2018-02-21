@@ -1,0 +1,11 @@
+package services;
+
+public class ServiceBRi implements Runnable {
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

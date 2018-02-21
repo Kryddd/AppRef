@@ -1,0 +1,14 @@
+package services;
+
+import java.util.ArrayList;
+
+import users.ListProgs;
+
+public class ServiceBRiProg extends Runnable{
+	
+	private static ListProgs lProgs;
+	
+	public static void initProgs(ListProgs progs) {
+		ServiceBRiProg.lProgs = progs;
+	}
+}

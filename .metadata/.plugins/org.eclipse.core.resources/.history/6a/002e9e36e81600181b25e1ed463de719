@@ -1,0 +1,14 @@
+package client;
+
+public class App {
+
+	private final static int PORT_PROG = 2600;
+	private final static int PORT_AMA = 2700;
+	
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

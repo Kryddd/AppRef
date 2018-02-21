@@ -1,0 +1,18 @@
+package app;
+
+import java.util.ArrayList;
+
+import users.Amateur;
+import users.Programmeur;
+
+public class BRiLaunch {
+
+	private final static int PORT_PROG = 2600;
+	private final static int PORT_AMA = 2700;
+	
+	public static void main(String[] args) {
+		ArrayList progs = new ArrayList<Programmeur>(); 
+		
+
+	}
+}

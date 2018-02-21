@@ -1,0 +1,21 @@
+package app;
+
+import users.Amateur;
+import users.Programmeur;
+import users.Users;
+
+public class BRiLaunch {
+
+	private final static int PORT_PROG = 2600;
+	private final static int PORT_AMA = 2700;
+	
+	public static void main(String[] args) {
+		Users usrs = Users.getInstance();
+		
+		usrs.addAmateur(new Amateur("login", "pass"));
+		usrs.addProg(new Programmeur("login", "pass", "URL"));
+		System.out.println(usrs.findProg("login", "pass"));
+
+	}
+
+}
