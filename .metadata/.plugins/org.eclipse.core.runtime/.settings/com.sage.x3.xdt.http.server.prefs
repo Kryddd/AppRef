@@ -1,0 +1,4 @@
+eclipse.preferences.version=1
+preferences.http.server.port=5493
+preferences.http.server.port.use=true
+preferences.http.server.upgrade=1

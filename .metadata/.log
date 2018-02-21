@@ -1,0 +1,41 @@
+!SESSION 2018-02-21 09:58:01.514 -----------------------------------------------
+eclipse.buildId=4.6.2.M20161124-1400
+java.version=1.8.0_131
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=fr_FR
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.egit.ui 2 0 2018-02-21 09:59:34.893
+!MESSAGE Warning: The environment variable HOME is not set. The following directory will be used to store the Git
+user global configuration and to define the default location to store repositories: 'z:\'. If this is
+not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
+EGit might behave differently since they see different configuration options.
+This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
+
+!ENTRY com.sage.x3.xdt.common.core 1 0 2018-02-21 10:01:32.176
+!MESSAGE SAFE X3 bundle version '2.0.4.rev019-20170123-1429' on Eclipse '4.6.2.M20161124-1400'
+
+!ENTRY com.sage.x3.xdt.dltk.launching 1 1 2018-02-21 10:01:32.208
+!MESSAGE Dbgp service running at port 10000
+
+!ENTRY com.sage.x3.xdt.common.core 1 0 2018-02-21 10:01:32.223
+!MESSAGE Dbgp proxy discovering finished by StatusInfo OK: null
+
+!ENTRY com.sage.x3.xdt.common.core 1 0 2018-02-21 10:01:32.286
+!MESSAGE HTTP preferences updated to use fixed port 5493.
+
+!ENTRY com.sage.x3.xdt.http.server 1 0 2018-02-21 10:01:32.348
+!MESSAGE Starting X3 http server on port 5493
+
+!ENTRY com.sage.x3.xdt.http.server 1 0 2018-02-21 10:01:32.926
+!MESSAGE X3 http server started on port 5493
+
+!ENTRY com.sage.x3.xdt.common.core 1 0 2018-02-21 10:02:36.756
+!MESSAGE Update check frequency is set to 'day', last check was on 2018-02-21T08:57:27Z
+
+!ENTRY com.sage.x3.xdt.common.core 1 0 2018-02-21 10:02:49.851
+!MESSAGE Check for updates in: http://pluginx3.sage.fr/safex3/studio/updates/
+
+!ENTRY com.sage.x3.xdt.common.core 1 0 2018-02-21 10:02:50.726
+!MESSAGE Auto update info: No updates were found in <A>available software sites</A>.
