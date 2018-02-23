@@ -45,3 +45,22 @@ This warning can be switched off on the Team > Git > Confirmations and Warnings 
 
 !ENTRY com.sage.x3.xdt.common.core 1 0 2018-02-21 12:01:32.345
 !MESSAGE Dbgp proxy discovering finished by StatusInfo OK: null
+
+!ENTRY org.eclipse.core.jobs 4 2 2018-02-21 12:59:56.775
+!MESSAGE An internal error occurred during: "LabelEventJob".
+!STACK 0
+org.eclipse.swt.SWTException: Device is disposed
+	at org.eclipse.swt.SWT.error(SWT.java:4533)
+	at org.eclipse.swt.SWT.error(SWT.java:4448)
+	at org.eclipse.swt.SWT.error(SWT.java:4419)
+	at org.eclipse.swt.widgets.Display.error(Display.java:1262)
+	at org.eclipse.swt.widgets.Display.asyncExec(Display.java:710)
+	at org.eclipse.egit.ui.internal.decorators.GitLightweightDecorator.fireLabelEvent(GitLightweightDecorator.java:727)
+	at org.eclipse.egit.ui.internal.decorators.LabelEventJob.run(GitLightweightDecorator.java:797)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY com.sage.x3.xdt.http.server 1 0 2018-02-21 12:59:56.947
+!MESSAGE X3 http server stopped
+
+!ENTRY com.sage.x3.xdt.common.core 1 0 2018-02-21 12:59:57.181
+!MESSAGE Dbgp proxy discovering finished by Status CANCEL: unknown code=1  null
