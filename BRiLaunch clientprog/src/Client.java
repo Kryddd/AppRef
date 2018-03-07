@@ -21,8 +21,8 @@ public class Client implements Runnable {
 			socket = connectServer();
 
 			while (menu != 0) {
-				System.out.println("Tappez le chiffre correspondant à l'opération demandée : \n" + "0. Quitter \n"
-						+ "1. Ajouter un Service \n" + "2. Mettre à jour un service \n"
+				System.out.println("Tappez le chiffre correspondant Ã  l'opÃ©ration demandÃ©e : \n" + "0. Quitter \n"
+						+ "1. Ajouter un Service \n" + "2. Mettre Ã  jour un service \n"
 						+ "3. Changer l'adresse du serveur FTP \n");
 				menu = Integer.parseInt(sc.nextLine());
 
@@ -39,7 +39,7 @@ public class Client implements Runnable {
 					socket = changeAddress(sc);
 					break;
 				default:
-					System.out.println("Entrée invalide");
+					System.out.println("EntrÃ©e invalide");
 					break;
 				}
 			}
@@ -53,13 +53,13 @@ public class Client implements Runnable {
 
 	private void addService() {
 		///////////////////////////////////////////////////////////////////
-		System.out.println("Pas implementé");
+		System.out.println("Pas implementÃ©");
 		///////////////////////////////////////////////////////////////////
 	}
 
 	private void updateService() {
 		///////////////////////////////////////////////////////////////////
-		System.out.println("Pas implementé");
+		System.out.println("Pas implementÃ©");
 		///////////////////////////////////////////////////////////////////
 	}
 
@@ -67,7 +67,7 @@ public class Client implements Runnable {
 		String bufferAdresse = adresse;
 		int bufferPort = port;
 		
-		System.out.println("Nouvelle adresse du serveur, \"default\" pour les parametres par défaut :");
+		System.out.println("Nouvelle adresse du serveur, \"default\" pour les parametres par dÃ©faut :");
 		adresse = sc.nextLine();
 
 		if (adresse.toLowerCase().equals("default")) {
@@ -83,7 +83,7 @@ public class Client implements Runnable {
 		try {
 			return connectServer();
 		} catch (IOException e) {
-			System.out.println("Erreur de connexion, retour au parametres précédants");
+			System.out.println("Erreur de connexion, retour au parametres prÃ©cÃ©dants");
 			adresse = bufferAdresse;
 			port = bufferPort;
 			return connectServer();
