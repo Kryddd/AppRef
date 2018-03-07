@@ -1,32 +1,36 @@
 package app;
 
 import java.util.ArrayList;
-
 import serveurs.ServeurBRi;
-import services.ServiceBRiAmateur;
-import services.ServiceBRiProg;
+import servicesBRi.ServiceBRiAmateur;
+import servicesBRi.ServiceBRiProg;
 import users.Amateur;
 import users.Programmeur;
 
 public class BRiLaunch {
 
 	private final static int PORT_PROG = 2600;
-	private final static int PORT_AMA = 2700;
+	private final static int PORT_AMA = 2800;
 	
 	public static void main(String[] args) {
+		
+		// Comptes programmeur
 		ArrayList<Programmeur> progs = new ArrayList<>(); 
 		progs.add(new Programmeur("brette", "passe", "localhost"));
-		progs.add(new Programmeur("couderc", "passe", "localhost"));
+		progs.add(new Programmeur("couderc", "1234", "localhost"));
 		progs.add(new Programmeur("Bob", "passe", "localhost"));
 		
-		try {
-			Class.forName("ServiceBRiProg.class");
-			Class.forName("ServiceBRiAmateur.class");
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+		// Comptes amateur
+		ArrayList<Amateur> amateurs = new ArrayList<>();
+		amateurs.add(new Amateur("Jean", "depasse"));
+		amateurs.add(new Amateur("Philippe", "abcd"));
+		
+		// Passage des listes de comptes aux services associés
+		ServiceBRiAmateur.initProgs(amateurs);
+		ServiceBRiProg.initProgs(progs);
 		
 		
+		// Lancements des serveurs programmeur et amateur
 		new Thread(new ServeurBRi(PORT_PROG, ServiceBRiProg.class)).start();
 		new Thread(new ServeurBRi(PORT_AMA, ServiceBRiAmateur.class)).start();
 	}
