@@ -1,13 +1,12 @@
-package client;
+import java.io.IOException;
 
 public class App {
-
-	private final static int PORT_SERVICE = 2700;
-	private final static String HOST = "localhost"; 
+	public final static int PORT_AMA = 2700;
+	public final static String adresse = "localhost";
 	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+	
+	
+	public static void main(String[] args) throws IOException{
+		new Thread(new Client(adresse, PORT_AMA)).start();
 	}
-
 }
