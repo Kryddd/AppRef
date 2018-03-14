@@ -37,6 +37,7 @@ public class ServeurBRi implements Runnable {
 				// Créée une instance du service avec le constructeur lorsque le port est solicité
 				classeService.getConstructor(Socket.class)
 				.newInstance(listenSocket.accept()).start();
+				System.out.println("Service " + classeService.getSimpleName() + " demarre");
 			}
 		} catch (IOException | InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException | SecurityException e) {

@@ -10,7 +10,7 @@ import users.Programmeur;
 public class BRiLaunch {
 
 	private final static int PORT_PROG = 2600;
-	private final static int PORT_AMA = 2800;
+	private final static int PORT_AMA = 2700;
 	
 	public static void main(String[] args) {
 		
@@ -22,8 +22,8 @@ public class BRiLaunch {
 		
 		// Comptes amateur
 		ArrayList<Amateur> amateurs = new ArrayList<>();
-		amateurs.add(new Amateur("Jean", "depasse"));
-		amateurs.add(new Amateur("Philippe", "abcd"));
+		amateurs.add(new Amateur("Jean", "depasse", "localhost"));
+		amateurs.add(new Amateur("Philippe", "abcd", "localhost"));
 		
 		// Passage des listes de comptes aux services associés
 		ServiceBRiAmateur.initProgs(amateurs);

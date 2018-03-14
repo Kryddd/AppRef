@@ -24,8 +24,9 @@ public class ServiceManager {
 	
 	public static String servicesList() {
 		String liste = "";
-		int i = 0;
 		synchronized(ServiceManager.class) {
+			liste = "Services disponibles :\n";
+			int i = 0;
 			for(Class<?> c : servicesClasses) {
 				liste = liste + (++i) + " : " + c.getSimpleName() + "\n";
 			}
