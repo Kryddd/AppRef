@@ -31,6 +31,11 @@ public class ServiceBRiProg extends ServiceBRi {
 		ServiceBRiProg.lProgs = progs;
 	}
 
+	
+	private BufferedReader in;
+	private PrintWriter out;
+	private boolean quit;
+	
 	/**
 	 * Constructeur du service
 	 * 
@@ -38,6 +43,7 @@ public class ServiceBRiProg extends ServiceBRi {
 	 */
 	public ServiceBRiProg(Socket sock) {
 		super(sock);
+		quit = false;
 	}
 
 	@Override
@@ -45,12 +51,40 @@ public class ServiceBRiProg extends ServiceBRi {
 		System.out.println("Connexion programmeur " + getNumService() + " demarree");
 
 		try {
-			BufferedReader in = new BufferedReader(new InputStreamReader(super.getSocket().getInputStream()));
-			PrintWriter out = new PrintWriter(super.getSocket().getOutputStream(), true);
+			in = new BufferedReader(new InputStreamReader(super.getSocket().getInputStream()));
+			out = new PrintWriter(super.getSocket().getOutputStream(), true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		String entree = "";
 		
+		// COMMUNICATION CLIENT-SERVEUR
+		while (!quit) {
+
+			try {
+				entree = menu();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			switch (entree) {
+			case "0":
+				quit = true;
+				break;
+			case "1":
+				addService();
+				break;
+			case "2":
+				rmService();
+			case "3":
+				editService();
+			default:
+				out.println("Commande invalide");
+			}
+		}
+
+		// FIN DE CONNEXION
 		System.out.println("Connexion programmeur " + getNumService() + " terminee");
 		try {
 			super.getSocket().close();
@@ -58,5 +92,29 @@ public class ServiceBRiProg extends ServiceBRi {
 			e.printStackTrace();
 		}
 
+	}
+
+	private String menu() throws IOException {
+		out.println("Tappez le chiffre correspondant à l'opération demandée : " 
+				+ "0. Quitter "
+				+ "1. Ajouter un service "
+				+ "2. Supprimer un service "
+				+ "3. Modifier un service");
+		return in.readLine();
+	}
+	
+	private void addService() {
+		// TODO Identification
+		
+	}
+
+	private void rmService() {
+		// TODO Identification
+		
+	}
+
+	private void editService() {
+		// TODO Identification
+		
 	}
 }

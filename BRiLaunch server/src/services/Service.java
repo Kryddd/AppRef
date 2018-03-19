@@ -1,5 +1,5 @@
 package services;
 
-public interface Service {
+public interface Service extends Runnable {
 
 }

@@ -25,8 +25,14 @@ public class App {
 
 		while (true) {
 			System.out.println(sIn.readLine());
-			sOut.println(clavier.readLine());
+			String entree = clavier.readLine();
+			sOut.println(entree);
+			if(entree.equals("0")) {
+				break;
+			}
 		}
+		
+		System.out.println("Fin de la communication");
 	}
 
 	protected void finalize() throws IOException {

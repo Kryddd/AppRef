@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import services.Service;
 import services.ServiceManager;
 import users.Amateur;
 
@@ -35,6 +37,7 @@ public class ServiceBRiAmateur extends ServiceBRi {
 	
 	private BufferedReader in = null;
 	private PrintWriter out = null;
+	private boolean quit;
 	
 	/**
 	 * Constructeur du service
@@ -43,6 +46,7 @@ public class ServiceBRiAmateur extends ServiceBRi {
 	 */
 	public ServiceBRiAmateur(Socket sock) {
 		super(sock);
+		quit = false;
 	}
 
 	@Override
@@ -56,17 +60,12 @@ public class ServiceBRiAmateur extends ServiceBRi {
 			e.printStackTrace();
 		}
 
-		boolean quit = false;
+		
 		String entree = "";
 
 		
 		// COMMUNICATION CLIENT-SERVEUR
 		while (!quit) {
-			try {
-				entree = in.readLine();
-			} catch (IOException e) {
-				entree = "";
-			}
 			
 			// menu
 			try {
@@ -102,16 +101,35 @@ public class ServiceBRiAmateur extends ServiceBRi {
 	}
 	
 	private String menu() throws IOException {
-		out.println("Tappez le chiffre correspondant à l'opération demandée : \n" 
-				+ "0. Quitter \n"
-				+ "1. Choisir un Service \n");
+		out.println("Tappez le chiffre correspondant à l'opération demandée : " 
+				+ "0. Quitter "
+				+ "1. Choisir un Service");
 		return in.readLine();
 	}
 	
 	private void services() throws IOException {
 		out.println(ServiceManager.servicesList()
-				+ "Choisissez un service à lancer (0 si aucun)\n");
-
-		// TODO Lancer le service demandé
+				+ "Choisissez un service à lancer (0 si vous souhaitez quitter)");
+		
+		int entree = Integer.parseInt(in.readLine());
+		
+		if(entree == 0) {
+			quit = true;
+		}
+		else {
+			// TODO Identification
+			// Récupère la classe du service demandé
+			Class<? extends Service> classService = ServiceManager.getService(entree);
+	
+			// Appel au constructeur
+			try {
+				Service service = classService.getConstructor(Socket.class).newInstance(getSocket());
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+					| NoSuchMethodException | SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+		}
 	}
 }
