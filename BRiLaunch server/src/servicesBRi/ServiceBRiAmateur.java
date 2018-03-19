@@ -121,15 +121,18 @@ public class ServiceBRiAmateur extends ServiceBRi {
 			// Récupère la classe du service demandé
 			Class<? extends Service> classService = ServiceManager.getService(entree);
 	
-			// Appel au constructeur
+			
 			try {
+				// Appel au constructeur
 				Service service = classService.getConstructor(Socket.class).newInstance(getSocket());
+				
+				// Lancement du thread du service
+				new Thread(service).start();
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 					| NoSuchMethodException | SecurityException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		
+			
 		}
 	}
 }
