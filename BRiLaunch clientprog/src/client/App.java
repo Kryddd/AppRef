@@ -14,7 +14,13 @@ public class App {
 
 	public static void main(String[] args) throws IOException {
 
-		// new Thread(new Client(adresse, PORT_AMA)).start();
+		System.out.println("  ____       _ _                            _     ");
+		System.out.println(" |  _ \\     (_) |                          | |    ");
+		System.out.println(" | |_) |_ __ _| |     __ _ _   _ _ __   ___| |__  ");
+		System.out.println(" |  _ <| '__| | |    / _` | | | | '_ \\ / __| '_ \\ ");
+		System.out.println(" | |_) | |  | | |___| (_| | |_| | | | | (__| | | |");
+		System.out.println(" |____/|_|  |_|______\\__,_|\\__,_|_| |_|\\___|_| |_|");
+		System.out.println();
 
 		socket = new Socket(adresse, PORT_PROG);
 

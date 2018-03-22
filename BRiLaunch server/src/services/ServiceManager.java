@@ -2,7 +2,6 @@ package services;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -22,6 +21,13 @@ public class ServiceManager {
 		servicesClasses = new ArrayList<Class<? extends Service>>();
 	}
 	
+	/**
+	 * Ajoute un service à la liste
+	 * @param serviceClass
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws ClasseInvalideException
+	 */
 	@SuppressWarnings("unchecked")
 	public static synchronized void addService(Class<?> serviceClass) throws InstantiationException, IllegalAccessException, ClasseInvalideException {
 		// Vérification de la validité de la classe par introspection
@@ -77,16 +83,47 @@ public class ServiceManager {
 		return servicesClasses.get(numService - 1);
 	}
 	
+	/**
+	 * Donne la liste des services disponibles et leurs auteurs
+	 * @return Liste des services
+	 */
 	public static String servicesList() {
 		String liste = "";
 		synchronized(ServiceManager.class) {
 			liste = "Services disponibles :##";
 			int i = 0;
-			for(Class<?> c : servicesClasses) {
-				liste = liste + (++i) + " : " + c.getSimpleName() + "##";
+			if(servicesClasses.size() == 0) {
+				return liste + "Aucun";
 			}
+			for(Class<?> c : servicesClasses) {
+				liste = liste + (++i) + " : " + c.getSimpleName() + " (auteur : " + c.getPackage().getName() + ")##";
+			}
+			
 		}
 		
 		return liste;
+	}
+	
+	/**
+	 * Donne le nom du package d'un service
+	 * Le nom du package correspond à son auteur
+	 * @param numService
+	 * @return Nom du package
+	 */
+	public static String getServicePackage(int numService) {
+		return servicesClasses.get(numService - 1).getPackage().getName();
+	}
+
+	/**
+	 * Supprime un service du ServiceManager
+	 * @param numService
+	 */
+	public static void removeService(int numService) {
+		synchronized(ServiceManager.class) {
+			System.out.println("Suppression du service " + servicesClasses.get(numService) 
+			+ " de " + getServicePackage(numService));
+			servicesClasses.remove(numService - 1);
+		}
+		
 	}
 }

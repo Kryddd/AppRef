@@ -39,6 +39,8 @@ public class ServiceBRiProg extends ServiceBRi {
 	private BufferedReader in;
 	private PrintWriter out;
 	private boolean quit;
+	private boolean error;
+	private Programmeur progLogged;
 
 	/**
 	 * Constructeur du service
@@ -48,6 +50,8 @@ public class ServiceBRiProg extends ServiceBRi {
 	public ServiceBRiProg(Socket sock) {
 		super(sock);
 		quit = false;
+		error = false;
+		progLogged = null;
 	}
 
 	@Override
@@ -66,10 +70,16 @@ public class ServiceBRiProg extends ServiceBRi {
 		// COMMUNICATION CLIENT-SERVEUR
 		while (!quit) {
 
+			// En cas d'erreur de saisie, la fonction
+			// appelée affichera l'erreur au lieu du menu
+			if (!error) {
+				menu();
+			}
 			try {
-				entree = menu();
-			} catch (IOException e) {
-				e.printStackTrace();
+				entree = in.readLine();
+			} catch (IOException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
 			}
 
 			switch (entree) {
@@ -78,15 +88,25 @@ public class ServiceBRiProg extends ServiceBRi {
 				break;
 			case "1":
 				try {
-					addService();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					login();
+				} catch (IOException e1) {
+					e1.printStackTrace();
 				}
 				break;
 			case "2":
-				rmService();
+				try {
+					addService();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
 			case "3":
+				try {
+					rmService();
+				} catch (NumberFormatException | IOException e) {
+					e.printStackTrace();
+				}
+			case "4":
 				editService();
 			default:
 				out.println("Commande invalide");
@@ -103,46 +123,102 @@ public class ServiceBRiProg extends ServiceBRi {
 
 	}
 
-	private String menu() throws IOException {
-		out.println("Tappez le chiffre correspondant à l'opération demandée : ##" + "0. Quitter ##"
-				+ "1. Ajouter un service ##" + "2. Supprimer un service ##" + "3. Modifier un service");
-		return in.readLine();
+	private void login() throws IOException {
+		error = false;
+
+		out.println("Login :");
+		String login = in.readLine();
+		out.println("Password :");
+		String pwd = in.readLine();
+
+		for (Programmeur p : lProgs) {
+			if (p.getLogin().equals(login) && p.getPassword().equals(pwd)) {
+				progLogged = p;
+				break;
+			}
+		}
+
+		if (progLogged == null) {
+			error = true;
+			out.println("L'identifiant ou le mot de passe est incorrect!##" + "Réessayer en saisissant 1");
+		}
+	}
+
+	/**
+	 * Affiche le menu
+	 */
+	private void menu() {
+		out.println(
+				"Tappez le chiffre correspondant à l'opération demandée : ##" + "0. Quitter ##" + "1. S'identifier ##"
+						+ "2. Ajouter un service ##" + "3. Supprimer un service ##" + "4. Modifier un service");
 	}
 
 	private void addService() throws IOException {
-		// TODO Identification
+		if (progLogged == null) {
+			out.println("Vous devez etre connecté pour effectuer cette opération!##Saisissez 1 pour vous connecter");
+			error = true;
+		} else {
+			error = false;
 
-		out.println("Chemin de la classe classe à charger :");
-		String URLFileDir = "ftp://localhost:2121/" + in.readLine();
-		URLClassLoader urlcl = new URLClassLoader(new URL[] { new URL(URLFileDir) });
+			// Connection au serveur FTP
+			out.println("Chemin de la classe à charger :");
+			String URLFileDir = "ftp://" + progLogged.getURLFtp() + in.readLine();
+			System.out.println(URLFileDir);
+			URLClassLoader urlcl = new URLClassLoader(new URL[] { new URL(URLFileDir) });
 
-		out.println("Nom de la classe à charger :");
-		String className = in.readLine();
-		Class<?> classLoaded = null;
-		System.out.println(urlcl.toString());
-		try {
-			classLoaded = urlcl.loadClass(className);
-		} catch (ClassNotFoundException e) {
-			out.println("Nom de classe invalide!");
+			// Chargement de la classe
+			out.println("Nom de la classe à charger :");
+			String className = in.readLine();
+			Class<?> classLoaded = null;
+			try {
+				classLoaded = urlcl.loadClass(className);
+
+				// Ajout de la classe au Service Manager
+				ServiceManager.addService((Class<? extends Service>) classLoaded);
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+				out.println("Nom de classe invalide!##Reessayer en saisissant 2");
+				error = true;
+			} catch (ClasseInvalideException e) {
+				out.println(e.getMessage() + "##Reessayer en saisissant 2");
+				in.readLine();
+				error = true;
+			}
+
+			urlcl.close();
+
 		}
-		System.out.println(classLoaded.getName());
-		try {
-			ServiceManager.addService((Class<? extends Service>) classLoaded);
-		} catch (InstantiationException | IllegalAccessException | ClasseInvalideException e) {
-			e.printStackTrace();
-		}
-		
-		urlcl.close();
-
 	}
 
-	private void rmService() {
-		// TODO Identification
+	private void rmService() throws NumberFormatException, IOException {
+		if (progLogged == null) {
+			out.println("Vous devez etre connecté pour effectuer cette opération!##Saisissez 1 pour vous connecter");
+			error = true;
+		} else {
+			error = false;
 
+			out.println(ServiceManager.servicesList() + "## Numero du service à supprimer :");
+
+			int numServ = Integer.valueOf(in.readLine());
+
+			// Verifie que le service appartient au programmeur
+			if (ServiceManager.getServicePackage(numServ).equals(progLogged.getLogin())) {
+
+				// Retire le service
+				ServiceManager.removeService(numServ);
+			} else {
+				out.println("Vous ne pouvez pas supprimer de service dont vous n etes pas l auteur!##"
+						+ "Reessayer en saisissant 3");
+				error = true;
+			}
+		}
 	}
 
 	private void editService() {
-		// TODO Identification
+		error = false;
+		if (progLogged == null) {
+			out.println("Vous devez etre connecté pour effectuer cette opération!##Saisissez 1 pour vous connecter");
+			error = true;
+		}
 
 	}
 }

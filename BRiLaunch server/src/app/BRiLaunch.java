@@ -16,14 +16,14 @@ public class BRiLaunch {
 		
 		// Comptes programmeur
 		ArrayList<Programmeur> progs = new ArrayList<>(); 
-		progs.add(new Programmeur("brette", "passe", "localhost"));
-		progs.add(new Programmeur("couderc", "1234", "localhost"));
-		progs.add(new Programmeur("Bob", "passe", "localhost"));
+		progs.add(new Programmeur("brette", "passe", "localhost:2121/"));
+		progs.add(new Programmeur("couderc", "1234", "localhost:2121/"));
+		progs.add(new Programmeur("Bob", "passe", "localhost:2121/"));
 		
 		// Comptes amateur
 		ArrayList<Amateur> amateurs = new ArrayList<>();
-		amateurs.add(new Amateur("Jean", "depasse", "localhost"));
-		amateurs.add(new Amateur("Philippe", "abcd", "localhost"));
+		amateurs.add(new Amateur("Jean", "depasse", "localhost:2121/"));
+		amateurs.add(new Amateur("Philippe", "abcd", "localhost:2121/"));
 		
 		// Passage des listes de comptes aux services associés
 		ServiceBRiAmateur.initProgs(amateurs);
