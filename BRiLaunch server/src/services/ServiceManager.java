@@ -16,9 +16,11 @@ import java.util.List;
 public class ServiceManager {
 
 	private static List<Class<? extends Service>> servicesClasses;
+	private static List<Boolean> servicesClassesActivated;
 
 	static {
 		servicesClasses = new ArrayList<Class<? extends Service>>();
+		servicesClassesActivated = new ArrayList<Boolean>();
 	}
 
 	/**
@@ -37,11 +39,15 @@ public class ServiceManager {
 
 		// Ajoute la classe
 		servicesClasses.add((Class<? extends Service>) serviceClass);
-		System.out.println("Classe " + serviceClass.getSimpleName() + " correctement ajoutée");
+		servicesClassesActivated.add(true); // La classe est activée par défaut
+		System.out.println("Classe " + serviceClass.getName() + " correctement ajoutée");
 	}
 
-	public static synchronized Class<? extends Service> getService(int numService) {
-		return servicesClasses.get(numService - 1);
+	public static synchronized Class<? extends Service> getService(int numService) throws NotActivatedException {
+		if(servicesClassesActivated.get(numService - 1)) {
+			return servicesClasses.get(numService - 1);
+		}
+		throw new NotActivatedException();
 	}
 
 	/**
@@ -53,12 +59,15 @@ public class ServiceManager {
 		String liste = "";
 		synchronized (ServiceManager.class) {
 			liste = "Services disponibles :##";
-			int i = 0;
+			
 			if (servicesClasses.size() == 0) {
 				return liste + "Aucun";
 			}
-			for (Class<?> c : servicesClasses) {
-				liste = liste + (++i) + " : " + c.getName() + " (auteur : " + c.getPackage().getName() + ")##";
+			
+			for(int i = 0; i < servicesClasses.size(); i++) {
+				Class<? extends Service> s = servicesClasses.get(i);
+				String etatClasse = (servicesClassesActivated.get(i))?"Activé":"Désactivé";
+				liste += (i + 1) + " : " + s.getSimpleName() + " Etat : " + etatClasse + " (auteur : " + s.getPackage().getName() + ")##";
 			}
 
 		}
@@ -168,5 +177,13 @@ public class ServiceManager {
 	 */
 	public static String getServiceName(int numService) {
 		return servicesClasses.get(numService - 1).getName();
+	}
+
+	/**
+	 * Change l'état du service
+	 * @param numService
+	 */
+	public static void changeState(int numService) {
+		servicesClassesActivated.set(numService - 1, !servicesClassesActivated.get(numService - 1));
 	}
 }

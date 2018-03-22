@@ -128,6 +128,13 @@ public class ServiceBRiProg extends ServiceBRi {
 					e.printStackTrace();
 				}
 				break;
+			case "7":
+				try {
+					changeStateService();
+				} catch (NumberFormatException | IOException e) {
+					e.printStackTrace();
+				}
+				break;
 			default:
 				out.println("Commande invalide");
 			}
@@ -143,20 +150,30 @@ public class ServiceBRiProg extends ServiceBRi {
 
 	}
 
+	
+
+	/**
+	 * Change l'adresse du serveur FTP du développeur
+	 * @throws IOException
+	 */
 	private void changeFTP() throws IOException {
 		if (progLogged == null) {
 			out.println("Vous devez etre connecté pour effectuer cette opération!##Saisissez 1 pour vous connecter");
 			error = true;
 		} else {
 			error = false;
-			
+
 			out.println("Saissisez votre nouvelle adresse de serveur FTP :");
-			
+
 			progLogged.setURLFtp(in.readLine());
 		}
-		
+
 	}
 
+	/**
+	 * Connexion du programmeur
+	 * @throws IOException
+	 */
 	private void login() throws IOException {
 		error = false;
 
@@ -182,9 +199,10 @@ public class ServiceBRiProg extends ServiceBRi {
 	 * Affiche le menu
 	 */
 	private void menu() {
-		out.println("> Tappez le chiffre correspondant à l'opération demandée : ##" + "0. Quitter ##"
-				+ "1. S'identifier ##" + "2. Ajouter un service ##" + "3. Supprimer un service ##"
-				+ "4. Modifier un service##" + "5. Créer un compte##" + "6.Changer de serveur FTP");
+		out.println(
+				"> Tappez le chiffre correspondant à l'opération demandée : ##" + "0. Quitter ##" + "1. S'identifier ##"
+						+ "2. Ajouter un service ##" + "3. Supprimer un service ##" + "4. Modifier un service##"
+						+ "5. Créer un compte##" + "6.Changer de serveur FTP##" + "7. Activer/désactiver un service");
 	}
 
 	/**
@@ -203,7 +221,7 @@ public class ServiceBRiProg extends ServiceBRi {
 		String ftp = in.readLine();
 
 		synchronized (lProgs) {
-			
+
 			// Recherche les doublons
 			for (Programmeur p : lProgs) {
 				if (p.getLogin().equals(login)) {
@@ -256,7 +274,8 @@ public class ServiceBRiProg extends ServiceBRi {
 	}
 
 	/**
-	 * Supprimer un service
+	 * Supprimer un service du programmeur
+	 * 
 	 * @throws NumberFormatException
 	 * @throws IOException
 	 */
@@ -285,8 +304,9 @@ public class ServiceBRiProg extends ServiceBRi {
 	}
 
 	/**
-	 * Mettre à jour un service
-	 * @throws IOException 
+	 * Met à jour un service du programmeur
+	 * 
+	 * @throws IOException
 	 */
 	private void editService() throws IOException {
 		error = false;
@@ -295,14 +315,14 @@ public class ServiceBRiProg extends ServiceBRi {
 			error = true;
 		} else {
 			out.println("Remplacement de service##" + ServiceManager.servicesList() + "##Numéro du service à remplacer :");
-			
+
 			int numServRempl = Integer.valueOf(in.readLine());
-			
+
 			// Connexion au FTP
 			out.println("Chemin de la classe à remplacer :");
 			String URLFileDir = "ftp://" + progLogged.getURLFtp() + in.readLine();
 			URLClassLoader urlcl = new URLClassLoader(new URL[] { new URL(URLFileDir) });
-			
+
 			// Récuperation de la classe
 			Class<?> classLoaded = null;
 			try {
@@ -311,8 +331,7 @@ public class ServiceBRiProg extends ServiceBRi {
 				out.println("Nom de classe invalide!##Mettrer la classe sur le FTP et reessayer en saisissant 4");
 				error = true;
 			}
-			
-			
+
 			// Remplacement du service dans le service manager
 			try {
 				ServiceManager.editService(classLoaded, numServRempl);
@@ -320,9 +339,36 @@ public class ServiceBRiProg extends ServiceBRi {
 				out.println(e.getMessage() + "##Réessayer en saisissant 4");
 				error = true;
 			}
-			
+
 			urlcl.close();
 		}
 
+	}
+	
+	/**
+	 * Change l'état(activé ou désactivé) des services du programmeur
+	 * @throws IOException 
+	 * @throws NumberFormatException 
+	 */
+	private void changeStateService() throws NumberFormatException, IOException {
+		error = false;
+		if (progLogged == null) {
+			out.println("Vous devez etre connecté pour effectuer cette opération!##Saisissez 1 pour vous connecter");
+			error = true;
+		} else {
+			out.println(ServiceManager.servicesList() + "##Saisissez le numéro du service dont vous voulez changer l'état :");
+			
+			int numService = Integer.valueOf(in.readLine());
+			
+			// Vérifie si le programmeur est propriétaire du service
+			if(progLogged.getLogin().equals(ServiceManager.getServicePackage(numService))) {
+				// Change l'état du service
+				ServiceManager.changeState(numService);
+			}
+			else {
+				error = true;
+				out.println("Vous n'etes pas propriétaire du service!##Réessayer en saisissant 7");
+			}
+		}
 	}
 }

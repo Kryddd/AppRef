@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import services.NotActivatedException;
 import services.Service;
 import services.ServiceManager;
 import users.Amateur;
@@ -118,11 +119,13 @@ public class ServiceBRiAmateur extends ServiceBRi {
 		}
 		else {
 			// TODO Identification
-			// Récupère la classe du service demandé
-			Class<? extends Service> classService = ServiceManager.getService(entree);
-	
 			
+			Class<? extends Service> classService = null;
+	
 			try {
+				// Récupère la classe du service demandé
+				classService = ServiceManager.getService(entree);
+				
 				// Appel au constructeur
 				Service service = classService.getConstructor(Socket.class).newInstance(getSocket());
 				
@@ -136,6 +139,8 @@ public class ServiceBRiAmateur extends ServiceBRi {
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 					| NoSuchMethodException | SecurityException | InterruptedException e) {
 				e.printStackTrace();
+			} catch(NotActivatedException e1) {
+				out.println("Le service n'est pas activé!");
 			}
 			
 		}
