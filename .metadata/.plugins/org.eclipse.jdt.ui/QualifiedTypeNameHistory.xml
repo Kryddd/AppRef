@@ -11,4 +11,10 @@
 <fullyQualifiedTypeName name="serveurs.ServeurBRi"/>
 <fullyQualifiedTypeName name="services.ServiceBRiProg"/>
 <fullyQualifiedTypeName name="services.ServiceBRiAmateur"/>
+<fullyQualifiedTypeName name="services.Service"/>
+<fullyQualifiedTypeName name="java.lang.reflect.Modifier"/>
+<fullyQualifiedTypeName name="java.net.Socket"/>
+<fullyQualifiedTypeName name="java.lang.reflect.Field"/>
+<fullyQualifiedTypeName name="java.lang.reflect.Method"/>
+<fullyQualifiedTypeName name="services.ClasseInvalideException"/>
 </qualifiedTypeNameHistroy>

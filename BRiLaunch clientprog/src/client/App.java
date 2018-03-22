@@ -24,7 +24,7 @@ public class App {
 		BufferedReader clavier = new BufferedReader(new InputStreamReader(System.in));
 
 		while (true) {
-			System.out.println(sIn.readLine());
+			System.out.println(sIn.readLine().replaceAll("##", "\n"));
 			sOut.println(clavier.readLine());
 		}
 	}

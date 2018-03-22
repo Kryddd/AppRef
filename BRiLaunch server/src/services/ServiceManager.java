@@ -88,7 +88,7 @@ public class ServiceManager {
 			liste = "Services disponibles :\n";
 			int i = 0;
 			for(Class<?> c : servicesClasses) {
-				liste = liste + (++i) + " : " + c.getSimpleName() + "\n";
+				liste = liste + (++i) + " : " + c.getSimpleName() + "##";
 			}
 		}
 		

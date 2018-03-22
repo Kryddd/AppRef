@@ -5,8 +5,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 
+import services.ClasseInvalideException;
+import services.Service;
+import services.ServiceManager;
 import users.Programmeur;
 
 /**
@@ -73,7 +78,12 @@ public class ServiceBRiProg extends ServiceBRi {
 				quit = true;
 				break;
 			case "1":
-				addService();
+				try {
+					addService();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				break;
 			case "2":
 				rmService();
@@ -95,16 +105,36 @@ public class ServiceBRiProg extends ServiceBRi {
 	}
 
 	private String menu() throws IOException {
-		out.println("Tappez le chiffre correspondant à l'opération demandée : " 
-				+ "0. Quitter "
-				+ "1. Ajouter un service "
-				+ "2. Supprimer un service "
+		out.println("Tappez le chiffre correspondant à l'opération demandée : ##" 
+				+ "0. Quitter ##"
+				+ "1. Ajouter un service ##"
+				+ "2. Supprimer un service ##"
 				+ "3. Modifier un service");
 		return in.readLine();
 	}
 	
-	private void addService() {
+	private void addService() throws IOException {
 		// TODO Identification
+		
+		out.println("Chemin de la classe classe à charger :");
+		String URLFileDir = "ftp://" + in.readLine(); 
+		URLClassLoader urlcl = new URLClassLoader(new URL[]{new URL(URLFileDir)});
+		
+		out.println("Nom de la classe à charger :");
+		String className = in.readLine();
+		Class<?> classLoaded = null;
+		
+		try {
+			classLoaded = urlcl.loadClass(className);
+		} catch (ClassNotFoundException e) {
+			out.println("Nom de classe invalide!");
+		}
+		
+		try {
+			ServiceManager.addService((Class<? extends Service>) classLoaded);
+		} catch (InstantiationException | IllegalAccessException | ClasseInvalideException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
