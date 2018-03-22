@@ -101,7 +101,7 @@ public class ServiceBRiAmateur extends ServiceBRi {
 	}
 	
 	private String menu() throws IOException {
-		out.println("Tappez le chiffre correspondant à l'opération demandée : ##" 
+		out.println("> Tappez le chiffre correspondant à l'opération demandée : ##" 
 				+ "0. Quitter ##"
 				+ "1. Choisir un Service");
 		return in.readLine();

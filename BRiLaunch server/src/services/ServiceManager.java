@@ -14,99 +14,62 @@ import java.util.List;
  * @version 1.0
  */
 public class ServiceManager {
-	
+
 	private static List<Class<? extends Service>> servicesClasses;
-	
+
 	static {
 		servicesClasses = new ArrayList<Class<? extends Service>>();
 	}
-	
+
 	/**
 	 * Ajoute un service à la liste
+	 * 
 	 * @param serviceClass
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 * @throws ClasseInvalideException
 	 */
 	@SuppressWarnings("unchecked")
-	public static synchronized void addService(Class<?> serviceClass) throws InstantiationException, IllegalAccessException, ClasseInvalideException {
+	public static synchronized void addService(Class<?> serviceClass)
+			throws InstantiationException, IllegalAccessException, ClasseInvalideException {
 		// Vérification de la validité de la classe par introspection
-		
-		if(Modifier.isAbstract(serviceClass.getModifiers())) {
-			throw new ClasseInvalideException("Classe invalide : abstraite");
-		}
-		
-		if(!Modifier.isPublic(serviceClass.getModifiers())) {
-			throw new ClasseInvalideException("Classe invalide : non publique");
-		}
-		
-		if(!Service.class.isAssignableFrom(serviceClass)) {
-			throw new ClasseInvalideException("Classe invalide : n implemente pas Service");
-		}
-		
-		Field[] fields = serviceClass.getDeclaredFields();
-		boolean fieldExists = false;
-		// Vérification d'un attribut Socket public final
-		for(Field f : fields) {
-			if(f.getType().equals(Socket.class)) {
-				if(Modifier.isPrivate(f.getModifiers())) {
-					if(Modifier.isFinal(f.getModifiers())) {
-						fieldExists = true;
-						break;
-					}
-				}
-			}
-		}
-		
-		if(!fieldExists) {
-			throw new ClasseInvalideException("Classe invalide : Pas d'attribut socket valable");
-		}
-		
-		// Vérifie le constructeur
-		Constructor<?> constrClass;
-		try {
-			constrClass = serviceClass.getConstructor(Socket.class);
-		} catch (NoSuchMethodException | SecurityException e) {
-			throw new ClasseInvalideException("Classe invalide : pas de constructeur avec socket");
-		}
-		
-		if(!Modifier.isPublic(constrClass.getModifiers())) {
-			throw new ClasseInvalideException("Classe invalide : le constructeur n'est pas public");
-		}
-		
+		checkServiceValide(serviceClass);
+
 		// Ajoute la classe
 		servicesClasses.add((Class<? extends Service>) serviceClass);
 		System.out.println("Classe " + serviceClass.getSimpleName() + " correctement ajoutée");
 	}
-	
+
 	public static synchronized Class<? extends Service> getService(int numService) {
 		return servicesClasses.get(numService - 1);
 	}
-	
+
 	/**
 	 * Donne la liste des services disponibles et leurs auteurs
+	 * 
 	 * @return Liste des services
 	 */
 	public static String servicesList() {
 		String liste = "";
-		synchronized(ServiceManager.class) {
+		synchronized (ServiceManager.class) {
 			liste = "Services disponibles :##";
 			int i = 0;
-			if(servicesClasses.size() == 0) {
+			if (servicesClasses.size() == 0) {
 				return liste + "Aucun";
 			}
-			for(Class<?> c : servicesClasses) {
-				liste = liste + (++i) + " : " + c.getSimpleName() + " (auteur : " + c.getPackage().getName() + ")##";
+			for (Class<?> c : servicesClasses) {
+				liste = liste + (++i) + " : " + c.getName() + " (auteur : " + c.getPackage().getName() + ")##";
 			}
-			
+
 		}
-		
+
 		return liste;
 	}
-	
+
 	/**
-	 * Donne le nom du package d'un service
-	 * Le nom du package correspond à son auteur
+	 * Donne le nom du package d'un service Le nom du package correspond à son
+	 * auteur
+	 * 
 	 * @param numService
 	 * @return Nom du package
 	 */
@@ -116,14 +79,94 @@ public class ServiceManager {
 
 	/**
 	 * Supprime un service du ServiceManager
+	 * 
 	 * @param numService
 	 */
 	public static void removeService(int numService) {
-		synchronized(ServiceManager.class) {
-			System.out.println("Suppression du service " + servicesClasses.get(numService) 
-			+ " de " + getServicePackage(numService));
+		synchronized (ServiceManager.class) {
+			System.out.println("Suppression du service " + servicesClasses.get(numService) + " de "
+					+ getServicePackage(numService));
 			servicesClasses.remove(numService - 1);
 		}
-		
+
+	}
+
+	/**
+	 * Remplace un service de la liste
+	 * 
+	 * @param serviceClass
+	 * @param numServiceRempl
+	 * @throws ClasseInvalideException
+	 */
+	@SuppressWarnings("unchecked")
+	public static void editService(Class<?> serviceClass, int numServiceRempl) throws ClasseInvalideException {
+		synchronized (ServiceManager.class) {
+			checkServiceValide(serviceClass);
+
+			// Remplace le service
+			servicesClasses.set(numServiceRempl - 1, (Class<? extends Service>) serviceClass);
+			System.out.println("Classe " + serviceClass.getName() + " correctement remplacée");
+		}
+	}
+
+	/**
+	 * Vérification de la validité de la classe par introspection
+	 * 
+	 * @param serviceClass
+	 *            Classe vérifiée
+	 * @throws ClasseInvalideException
+	 */
+	private static void checkServiceValide(Class<?> serviceClass) throws ClasseInvalideException {
+
+		if (Modifier.isAbstract(serviceClass.getModifiers())) {
+			throw new ClasseInvalideException("Classe invalide : abstraite");
+		}
+
+		if (!Modifier.isPublic(serviceClass.getModifiers())) {
+			throw new ClasseInvalideException("Classe invalide : non publique");
+		}
+
+		if (!Service.class.isAssignableFrom(serviceClass)) {
+			throw new ClasseInvalideException("Classe invalide : n implemente pas Service");
+		}
+
+		Field[] fields = serviceClass.getDeclaredFields();
+		boolean fieldExists = false;
+		// Vérification d'un attribut Socket public final
+		for (Field f : fields) {
+			if (f.getType().equals(Socket.class)) {
+				if (Modifier.isPrivate(f.getModifiers())) {
+					if (Modifier.isFinal(f.getModifiers())) {
+						fieldExists = true;
+						break;
+					}
+				}
+			}
+		}
+
+		if (!fieldExists) {
+			throw new ClasseInvalideException("Classe invalide : Pas d'attribut socket valable");
+		}
+
+		// Vérifie le constructeur
+		Constructor<?> constrClass;
+		try {
+			constrClass = serviceClass.getConstructor(Socket.class);
+		} catch (NoSuchMethodException | SecurityException e) {
+			throw new ClasseInvalideException("Classe invalide : pas de constructeur avec socket");
+		}
+
+		if (!Modifier.isPublic(constrClass.getModifiers())) {
+			throw new ClasseInvalideException("Classe invalide : le constructeur n'est pas public");
+		}
+	}
+	
+	/**
+	 * Donne le nom complet d'un service à partir de son num
+	 * @param numService
+	 * @return Nom du service
+	 */
+	public static String getServiceName(int numService) {
+		return servicesClasses.get(numService - 1).getName();
 	}
 }

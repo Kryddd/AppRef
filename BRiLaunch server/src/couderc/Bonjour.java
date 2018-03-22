@@ -16,7 +16,6 @@ import services.Service;
 public class Bonjour implements Service {
 
 	private final Socket client;
-	private BufferedReader in;
 	private PrintWriter out;
 	
 	public Bonjour(Socket client) {
@@ -27,7 +26,7 @@ public class Bonjour implements Service {
 	public void run() {
 		System.out.println("Service Bonjour lancé");
 		try {
-			in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+			new BufferedReader(new InputStreamReader(client.getInputStream()));
 			out = new PrintWriter(client.getOutputStream(), true);
 		} catch (IOException e) {
 			e.printStackTrace();

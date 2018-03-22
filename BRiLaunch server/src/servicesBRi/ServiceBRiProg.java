@@ -83,31 +83,51 @@ public class ServiceBRiProg extends ServiceBRi {
 			}
 
 			switch (entree) {
-			case "0":
+			case "0": // Quitter
 				quit = true;
 				break;
-			case "1":
+			case "1": // Se connecter
 				try {
 					login();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
 				break;
-			case "2":
+			case "2": // Ajouter un service
 				try {
 					addService();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				break;
-			case "3":
+			case "3": // Supprimer un service
 				try {
 					rmService();
 				} catch (NumberFormatException | IOException e) {
 					e.printStackTrace();
 				}
-			case "4":
-				editService();
+				break;
+			case "4": // Modifier un service
+				try {
+					editService();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				break;
+			case "5": // Créer un compte
+				try {
+					register();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
+			case "6": // Changer d'adresse FTP
+				try {
+					changeFTP();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
 			default:
 				out.println("Commande invalide");
 			}
@@ -121,6 +141,20 @@ public class ServiceBRiProg extends ServiceBRi {
 			e.printStackTrace();
 		}
 
+	}
+
+	private void changeFTP() throws IOException {
+		if (progLogged == null) {
+			out.println("Vous devez etre connecté pour effectuer cette opération!##Saisissez 1 pour vous connecter");
+			error = true;
+		} else {
+			error = false;
+			
+			out.println("Saissisez votre nouvelle adresse de serveur FTP :");
+			
+			progLogged.setURLFtp(in.readLine());
+		}
+		
 	}
 
 	private void login() throws IOException {
@@ -148,11 +182,44 @@ public class ServiceBRiProg extends ServiceBRi {
 	 * Affiche le menu
 	 */
 	private void menu() {
-		out.println(
-				"Tappez le chiffre correspondant à l'opération demandée : ##" + "0. Quitter ##" + "1. S'identifier ##"
-						+ "2. Ajouter un service ##" + "3. Supprimer un service ##" + "4. Modifier un service");
+		out.println("> Tappez le chiffre correspondant à l'opération demandée : ##" + "0. Quitter ##"
+				+ "1. S'identifier ##" + "2. Ajouter un service ##" + "3. Supprimer un service ##"
+				+ "4. Modifier un service##" + "5. Créer un compte##" + "6.Changer de serveur FTP");
 	}
 
+	/**
+	 * Créée un compte
+	 * 
+	 * @throws IOException
+	 */
+	private void register() throws IOException {
+		error = false;
+
+		out.println("Création de compte####Login :");
+		String login = in.readLine();
+		out.println("Password :");
+		String pwd = in.readLine();
+		out.println("Serveur FTP :");
+		String ftp = in.readLine();
+
+		synchronized (lProgs) {
+			
+			// Recherche les doublons
+			for (Programmeur p : lProgs) {
+				if (p.getLogin().equals(login)) {
+					error = true;
+					out.println("Le login existe déjà!##" + "Reessayer en saisissant 5");
+				}
+			}
+
+			if (!error) {
+				// Ajoute le prog à la liste
+				lProgs.add(new Programmeur(login, pwd, ftp));
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
 	private void addService() throws IOException {
 		if (progLogged == null) {
 			out.println("Vous devez etre connecté pour effectuer cette opération!##Saisissez 1 pour vous connecter");
@@ -160,14 +227,13 @@ public class ServiceBRiProg extends ServiceBRi {
 		} else {
 			error = false;
 
-			// Connection au serveur FTP
+			// Connexion au serveur FTP
 			out.println("Chemin de la classe à charger :");
 			String URLFileDir = "ftp://" + progLogged.getURLFtp() + in.readLine();
-			System.out.println(URLFileDir);
 			URLClassLoader urlcl = new URLClassLoader(new URL[] { new URL(URLFileDir) });
 
 			// Chargement de la classe
-			out.println("Nom de la classe à charger :");
+			out.println("Nom complet de la classe à charger :");
 			String className = in.readLine();
 			Class<?> classLoaded = null;
 			try {
@@ -189,6 +255,11 @@ public class ServiceBRiProg extends ServiceBRi {
 		}
 	}
 
+	/**
+	 * Supprimer un service
+	 * @throws NumberFormatException
+	 * @throws IOException
+	 */
 	private void rmService() throws NumberFormatException, IOException {
 		if (progLogged == null) {
 			out.println("Vous devez etre connecté pour effectuer cette opération!##Saisissez 1 pour vous connecter");
@@ -213,11 +284,44 @@ public class ServiceBRiProg extends ServiceBRi {
 		}
 	}
 
-	private void editService() {
+	/**
+	 * Mettre à jour un service
+	 * @throws IOException 
+	 */
+	private void editService() throws IOException {
 		error = false;
 		if (progLogged == null) {
 			out.println("Vous devez etre connecté pour effectuer cette opération!##Saisissez 1 pour vous connecter");
 			error = true;
+		} else {
+			out.println("Remplacement de service##" + ServiceManager.servicesList() + "##Numéro du service à remplacer :");
+			
+			int numServRempl = Integer.valueOf(in.readLine());
+			
+			// Connexion au FTP
+			out.println("Chemin de la classe à remplacer :");
+			String URLFileDir = "ftp://" + progLogged.getURLFtp() + in.readLine();
+			URLClassLoader urlcl = new URLClassLoader(new URL[] { new URL(URLFileDir) });
+			
+			// Récuperation de la classe
+			Class<?> classLoaded = null;
+			try {
+				classLoaded = urlcl.loadClass(ServiceManager.getServiceName(numServRempl));
+			} catch (ClassNotFoundException e) {
+				out.println("Nom de classe invalide!##Mettrer la classe sur le FTP et reessayer en saisissant 4");
+				error = true;
+			}
+			
+			
+			// Remplacement du service dans le service manager
+			try {
+				ServiceManager.editService(classLoaded, numServRempl);
+			} catch (ClasseInvalideException e) {
+				out.println(e.getMessage() + "##Réessayer en saisissant 4");
+				error = true;
+			}
+			
+			urlcl.close();
 		}
 
 	}

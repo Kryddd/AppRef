@@ -23,4 +23,8 @@ public abstract class User {
 	public String getURLFtp() {
 		return this.URLFtp;
 	}
+	
+	public void setURLFtp(String newFTP) {
+		this.URLFtp = newFTP;
+	}
 }
