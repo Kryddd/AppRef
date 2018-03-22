@@ -8,6 +8,12 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe qui contient les services accessibles sur BRiLaunch
+ * 
+ * @author couderc1
+ * @version 1.0
+ */
 public class ServiceManager {
 	
 	private static List<Class<? extends Service>> servicesClasses;
@@ -16,7 +22,8 @@ public class ServiceManager {
 		servicesClasses = new ArrayList<Class<? extends Service>>();
 	}
 	
-	public static synchronized void addService(Class<? extends Service> serviceClass) throws InstantiationException, IllegalAccessException, ClasseInvalideException {
+	@SuppressWarnings("unchecked")
+	public static synchronized void addService(Class<?> serviceClass) throws InstantiationException, IllegalAccessException, ClasseInvalideException {
 		// Vérification de la validité de la classe par introspection
 		
 		if(Modifier.isAbstract(serviceClass.getModifiers())) {
@@ -27,7 +34,30 @@ public class ServiceManager {
 			throw new ClasseInvalideException("Classe invalide : non publique");
 		}
 		
-		Constructor<? extends Service> constrClass;
+		if(!Service.class.isAssignableFrom(serviceClass)) {
+			throw new ClasseInvalideException("Classe invalide : n implemente pas Service");
+		}
+		
+		Field[] fields = serviceClass.getDeclaredFields();
+		boolean fieldExists = false;
+		// Vérification d'un attribut Socket public final
+		for(Field f : fields) {
+			if(f.getType().equals(Socket.class)) {
+				if(Modifier.isPrivate(f.getModifiers())) {
+					if(Modifier.isFinal(f.getModifiers())) {
+						fieldExists = true;
+						break;
+					}
+				}
+			}
+		}
+		
+		if(!fieldExists) {
+			throw new ClasseInvalideException("Classe invalide : Pas d'attribut socket valable");
+		}
+		
+		// Vérifie le constructeur
+		Constructor<?> constrClass;
 		try {
 			constrClass = serviceClass.getConstructor(Socket.class);
 		} catch (NoSuchMethodException | SecurityException e) {
@@ -38,43 +68,8 @@ public class ServiceManager {
 			throw new ClasseInvalideException("Classe invalide : le constructeur n'est pas public");
 		}
 		
-		Field[] fields = serviceClass.getFields();
-		boolean fieldExists = false;
-		
-		// Vérification d'un attribut Socket public final
-		for(Field f : fields) {
-			if(f.getType().equals(Socket.class)) {
-				if(Modifier.isPublic(f.getModifiers())) {
-					if(Modifier.isFinal(f.getModifiers())) {
-						fieldExists = true;
-						break;
-					}
-				}
-			}
-		}
-		
-		if(!fieldExists) {
-			throw new ClasseInvalideException("Classe invalide : Pas d'attibut socket valable");
-		}
-		
-		
-		// Vérifie la methode toStringue
-		try {
-			Method methClass = serviceClass.getMethod("toStringue");
-			
-			if(!Modifier.isPublic(methClass.getModifiers())) {
-				throw new ClasseInvalideException("Classe invalide : pas de methode toStringue accessible");
-			}
-			
-			if(!methClass.getReturnType().equals(String.class)) {
-				throw new ClasseInvalideException("Classe invalide : pas de methode toStringue qui renvoie un String");
-			}
-			
-		} catch (NoSuchMethodException | SecurityException e) {
-			throw new ClasseInvalideException("Classe invalide : pas de methode toStringue valable");
-		}
-		
-		servicesClasses.add(serviceClass);
+		// Ajoute la classe
+		servicesClasses.add((Class<? extends Service>) serviceClass);
 		System.out.println("Classe " + serviceClass.getSimpleName() + " correctement ajoutée");
 	}
 	
@@ -85,7 +80,7 @@ public class ServiceManager {
 	public static String servicesList() {
 		String liste = "";
 		synchronized(ServiceManager.class) {
-			liste = "Services disponibles :\n";
+			liste = "Services disponibles :##";
 			int i = 0;
 			for(Class<?> c : servicesClasses) {
 				liste = liste + (++i) + " : " + c.getSimpleName() + "##";

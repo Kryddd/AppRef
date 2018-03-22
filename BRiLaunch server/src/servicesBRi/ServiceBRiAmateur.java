@@ -35,8 +35,8 @@ public class ServiceBRiAmateur extends ServiceBRi {
 	}
 
 	
-	private BufferedReader in = null;
-	private PrintWriter out = null;
+	private BufferedReader in;
+	private PrintWriter out;
 	private boolean quit;
 	
 	/**
@@ -127,9 +127,14 @@ public class ServiceBRiAmateur extends ServiceBRi {
 				Service service = classService.getConstructor(Socket.class).newInstance(getSocket());
 				
 				// Lancement du thread du service
-				new Thread(service).start();
+				Thread serviceRunning = new Thread(service);
+				serviceRunning.start();
+				
+				// Attend la fin du service
+				serviceRunning.join();
+				
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-					| NoSuchMethodException | SecurityException e) {
+					| NoSuchMethodException | SecurityException | InterruptedException e) {
 				e.printStackTrace();
 			}
 			

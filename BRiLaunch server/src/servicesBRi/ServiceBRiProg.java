@@ -36,11 +36,10 @@ public class ServiceBRiProg extends ServiceBRi {
 		ServiceBRiProg.lProgs = progs;
 	}
 
-	
 	private BufferedReader in;
 	private PrintWriter out;
 	private boolean quit;
-	
+
 	/**
 	 * Constructeur du service
 	 * 
@@ -63,7 +62,7 @@ public class ServiceBRiProg extends ServiceBRi {
 		}
 
 		String entree = "";
-		
+
 		// COMMUNICATION CLIENT-SERVEUR
 		while (!quit) {
 
@@ -105,46 +104,45 @@ public class ServiceBRiProg extends ServiceBRi {
 	}
 
 	private String menu() throws IOException {
-		out.println("Tappez le chiffre correspondant à l'opération demandée : ##" 
-				+ "0. Quitter ##"
-				+ "1. Ajouter un service ##"
-				+ "2. Supprimer un service ##"
-				+ "3. Modifier un service");
+		out.println("Tappez le chiffre correspondant à l'opération demandée : ##" + "0. Quitter ##"
+				+ "1. Ajouter un service ##" + "2. Supprimer un service ##" + "3. Modifier un service");
 		return in.readLine();
 	}
-	
+
 	private void addService() throws IOException {
 		// TODO Identification
-		
+
 		out.println("Chemin de la classe classe à charger :");
-		String URLFileDir = "ftp://" + in.readLine(); 
-		URLClassLoader urlcl = new URLClassLoader(new URL[]{new URL(URLFileDir)});
-		
+		String URLFileDir = "ftp://localhost:2121/" + in.readLine();
+		URLClassLoader urlcl = new URLClassLoader(new URL[] { new URL(URLFileDir) });
+
 		out.println("Nom de la classe à charger :");
 		String className = in.readLine();
 		Class<?> classLoaded = null;
-		
+		System.out.println(urlcl.toString());
 		try {
 			classLoaded = urlcl.loadClass(className);
 		} catch (ClassNotFoundException e) {
 			out.println("Nom de classe invalide!");
 		}
-		
+		System.out.println(classLoaded.getName());
 		try {
 			ServiceManager.addService((Class<? extends Service>) classLoaded);
 		} catch (InstantiationException | IllegalAccessException | ClasseInvalideException e) {
 			e.printStackTrace();
 		}
 		
+		urlcl.close();
+
 	}
 
 	private void rmService() {
 		// TODO Identification
-		
+
 	}
 
 	private void editService() {
 		// TODO Identification
-		
+
 	}
 }
