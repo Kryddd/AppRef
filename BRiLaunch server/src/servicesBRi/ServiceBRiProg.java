@@ -202,7 +202,7 @@ public class ServiceBRiProg extends ServiceBRi {
 		out.println(
 				"> Tappez le chiffre correspondant à l'opération demandée : ##" + "0. Quitter ##" + "1. S'identifier ##"
 						+ "2. Ajouter un service ##" + "3. Supprimer un service ##" + "4. Modifier un service##"
-						+ "5. Créer un compte##" + "6.Changer de serveur FTP##" + "7. Activer/désactiver un service");
+						+ "5. Créer un compte##" + "6. Changer de serveur FTP##" + "7. Activer/désactiver un service");
 	}
 
 	/**
@@ -246,7 +246,7 @@ public class ServiceBRiProg extends ServiceBRi {
 			error = false;
 
 			// Connexion au serveur FTP
-			out.println("Chemin de la classe à charger :");
+			out.println("Chemin de la classe à charger (Appuyer sur entrée si elle se trouve à la racine):");
 			String URLFileDir = "ftp://" + progLogged.getURLFtp() + in.readLine();
 			URLClassLoader urlcl = new URLClassLoader(new URL[] { new URL(URLFileDir) });
 
@@ -319,7 +319,7 @@ public class ServiceBRiProg extends ServiceBRi {
 			int numServRempl = Integer.valueOf(in.readLine());
 
 			// Connexion au FTP
-			out.println("Chemin de la classe à remplacer :");
+			out.println("Chemin de la classe à remplacer (Appuyer sur entrée si elle se trouve à la racine) :");
 			String URLFileDir = "ftp://" + progLogged.getURLFtp() + in.readLine();
 			URLClassLoader urlcl = new URLClassLoader(new URL[] { new URL(URLFileDir) });
 

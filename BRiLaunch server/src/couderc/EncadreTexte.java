@@ -9,23 +9,22 @@ import java.net.Socket;
 import services.Service;
 
 /**
- * Service d'inversion suivant la norme BRi
- * @author couderc1
- * @version 1.0
+ * Service d'encadrement de texte suivant la norme BRi
+ * @author Jacques
+ *
  */
-public class InversionChaine implements Service {
+public class EncadreTexte implements Service {
 
 	private final Socket client;
 	private BufferedReader in;
 	private PrintWriter out;
 	
-	public InversionChaine(Socket client) {
+	public EncadreTexte(Socket client) {
 		this.client = client;
 	}
 	
 	@Override
 	public void run() {
-		System.out.println("Service Bonjour lancé");
 		try {
 			in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 			out = new PrintWriter(client.getOutputStream(), true);
@@ -33,21 +32,15 @@ public class InversionChaine implements Service {
 			e.printStackTrace();
 		}
 		
-		out.println("Service d'inversion de chaine de caractères lancé##Insèrer une chaine à inverser :");
-		String chaine = "";
+		out.println("Service d'encadrement de chaine démarré##Chaine à encadrer :");
+		String chaineEnc = "";
 		try {
-			chaine = in.readLine();
+			chaineEnc = in.readLine();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		StringBuilder result = new StringBuilder();
-		
-		for (int i = chaine.length() - 1; i >= 0; i--) {
-            result.append(chaine.charAt(i));
-        }
-		
-		out.println(result.toString() + "####Appuyez sur entrée pour continuer...");
+		out.println("*** " + chaineEnc + " ***" + "####Appuyez sur Entrée pour continuer...");
 	}
 
 }

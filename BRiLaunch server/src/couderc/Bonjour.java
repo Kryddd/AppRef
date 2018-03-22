@@ -9,7 +9,7 @@ import java.net.Socket;
 import services.Service;
 
 /**
- * Classe d'un service du programmeur couderc
+ * Classe d'un service suivant la norme BRi
  * @author couderc1
  * @version 1.0
  */

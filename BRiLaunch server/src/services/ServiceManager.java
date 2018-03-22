@@ -44,7 +44,7 @@ public class ServiceManager {
 	}
 
 	public static synchronized Class<? extends Service> getService(int numService) throws NotActivatedException {
-		if(servicesClassesActivated.get(numService - 1)) {
+		if (servicesClassesActivated.get(numService - 1)) {
 			return servicesClasses.get(numService - 1);
 		}
 		throw new NotActivatedException();
@@ -55,19 +55,20 @@ public class ServiceManager {
 	 * 
 	 * @return Liste des services
 	 */
-	public static String servicesList() {
+	public static synchronized String servicesList() {
 		String liste = "";
 		synchronized (ServiceManager.class) {
 			liste = "Services disponibles :##";
-			
+
 			if (servicesClasses.size() == 0) {
 				return liste + "Aucun";
 			}
-			
-			for(int i = 0; i < servicesClasses.size(); i++) {
+
+			for (int i = 0; i < servicesClasses.size(); i++) {
 				Class<? extends Service> s = servicesClasses.get(i);
-				String etatClasse = (servicesClassesActivated.get(i))?"Activé":"Désactivé";
-				liste += (i + 1) + " : " + s.getSimpleName() + " Etat : " + etatClasse + " (auteur : " + s.getPackage().getName() + ")##";
+				String etatClasse = (servicesClassesActivated.get(i)) ? "Activé" : "Désactivé";
+				liste += (i + 1) + " : " + s.getSimpleName() + " Etat : " + etatClasse + " (auteur : "
+						+ s.getPackage().getName() + ")##";
 			}
 
 		}
@@ -82,7 +83,7 @@ public class ServiceManager {
 	 * @param numService
 	 * @return Nom du package
 	 */
-	public static String getServicePackage(int numService) {
+	public static synchronized String getServicePackage(int numService) {
 		return servicesClasses.get(numService - 1).getPackage().getName();
 	}
 
@@ -91,13 +92,9 @@ public class ServiceManager {
 	 * 
 	 * @param numService
 	 */
-	public static void removeService(int numService) {
-		synchronized (ServiceManager.class) {
-			System.out.println("Suppression du service " + servicesClasses.get(numService) + " de "
-					+ getServicePackage(numService));
-			servicesClasses.remove(numService - 1);
-		}
-
+	public static synchronized void removeService(int numService) {
+		System.out.println("Suppression du service " + servicesClasses.get(numService) + " de " + getServicePackage(numService));
+		servicesClasses.remove(numService - 1);
 	}
 
 	/**
@@ -141,6 +138,7 @@ public class ServiceManager {
 
 		Field[] fields = serviceClass.getDeclaredFields();
 		boolean fieldExists = false;
+
 		// Vérification d'un attribut Socket public final
 		for (Field f : fields) {
 			if (f.getType().equals(Socket.class)) {
@@ -169,9 +167,10 @@ public class ServiceManager {
 			throw new ClasseInvalideException("Classe invalide : le constructeur n'est pas public");
 		}
 	}
-	
+
 	/**
 	 * Donne le nom complet d'un service à partir de son num
+	 * 
 	 * @param numService
 	 * @return Nom du service
 	 */
@@ -181,6 +180,7 @@ public class ServiceManager {
 
 	/**
 	 * Change l'état du service
+	 * 
 	 * @param numService
 	 */
 	public static void changeState(int numService) {

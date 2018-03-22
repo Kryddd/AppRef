@@ -39,6 +39,7 @@ public class ServiceBRiAmateur extends ServiceBRi {
 	private BufferedReader in;
 	private PrintWriter out;
 	private boolean quit;
+	private Amateur amaLogged;
 	
 	/**
 	 * Constructeur du service
@@ -68,9 +69,9 @@ public class ServiceBRiAmateur extends ServiceBRi {
 		// COMMUNICATION CLIENT-SERVEUR
 		while (!quit) {
 			
-			// menu
+			menu();
 			try {
-				entree = menu();
+				entree = in.readLine();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -101,16 +102,15 @@ public class ServiceBRiAmateur extends ServiceBRi {
 
 	}
 	
-	private String menu() throws IOException {
+	private void menu() {
 		out.println("> Tappez le chiffre correspondant à l'opération demandée : ##" 
 				+ "0. Quitter ##"
 				+ "1. Choisir un Service");
-		return in.readLine();
 	}
 	
 	private void services() throws IOException {
 		out.println(ServiceManager.servicesList()
-				+ "Choisissez un service à lancer (0 si vous souhaitez quitter)");
+				+ "##Choisissez un service à lancer (0 si vous souhaitez quitter)");
 		
 		int entree = Integer.parseInt(in.readLine());
 		
@@ -118,16 +118,44 @@ public class ServiceBRiAmateur extends ServiceBRi {
 			quit = true;
 		}
 		else {
-			// TODO Identification
-			
 			Class<? extends Service> classService = null;
 	
 			try {
 				// Récupère la classe du service demandé
 				classService = ServiceManager.getService(entree);
 				
-				// Appel au constructeur
-				Service service = classService.getConstructor(Socket.class).newInstance(getSocket());
+				
+				Service service = null;
+				
+				// Vérifie si le constructeur du service a besoin de l'URL du FTP (String)
+				if(constructUtiliseFTP(classService)){
+					// Connexion
+					out.println("Le service demandé nécessite une connexion##Login :");
+					String login = in.readLine();
+					out.println("Password :");
+					String pwd = in.readLine();
+					
+					// Vérifie l'utilisateur dans la liste
+					synchronized(amateurs) {
+						for(Amateur a : amateurs) {
+							if(a.getLogin().equals(login)) {
+								amaLogged = a;
+								break;
+							}
+						}
+					}
+					
+					if(amaLogged == null) {
+						out.println("Mot de passe ou identifiant incorrect");
+					}
+					else {
+						// Utilisateur connecté -> utilisation du constructeur avec @ FTP
+						service = classService.getConstructor(Socket.class, String.class).newInstance(getSocket(), amaLogged.getURLFtp());
+					}
+				}
+				else {
+					service = classService.getConstructor(Socket.class).newInstance(getSocket());
+				}
 				
 				// Lancement du thread du service
 				Thread serviceRunning = new Thread(service);
@@ -144,5 +172,19 @@ public class ServiceBRiAmateur extends ServiceBRi {
 			}
 			
 		}
+	}
+	
+	/**
+	 * Indique si le constructeur de la classe utilise un parametre String pour l'@ du FTP
+	 * @param classService
+	 * @return
+	 */
+	private boolean constructUtiliseFTP(Class<? extends Service> classService) {
+		try {
+			classService.getConstructor(Socket.class, String.class);
+		} catch (NoSuchMethodException | SecurityException e) {
+			return false;
+		}
+		return true;
 	}
 }
