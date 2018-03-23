@@ -1,5 +1,10 @@
 package users;
 
+/**
+ * Classe abstraite des utilisateurs
+ * @author couderc1
+ * @version 1.0
+ */
 public abstract class User {
 	
 	private String login;

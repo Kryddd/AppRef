@@ -8,8 +8,9 @@ import java.net.Socket;
 import servicesBRi.ServiceBRi;
 
 /**
+ * Serveur sur lequel se connectent les utilisateurs
  * @author couderc1
- *
+ * @version 1.0
  */
 public class ServeurBRi implements Runnable {
 

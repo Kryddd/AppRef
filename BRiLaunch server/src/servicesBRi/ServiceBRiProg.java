@@ -251,8 +251,8 @@ public class ServiceBRiProg extends ServiceBRi {
 			URLClassLoader urlcl = new URLClassLoader(new URL[] { new URL(URLFileDir) });
 
 			// Chargement de la classe
-			out.println("Nom complet de la classe à charger :");
-			String className = in.readLine();
+			out.println("Nom de la classe à charger (sans le nom de package):");
+			String className = progLogged.getLogin() + "." + in.readLine();
 			Class<?> classLoaded = null;
 			try {
 				classLoaded = urlcl.loadClass(className);

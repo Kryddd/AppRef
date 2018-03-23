@@ -7,6 +7,11 @@ import servicesBRi.ServiceBRiProg;
 import users.Amateur;
 import users.Programmeur;
 
+/**
+ * Point d'entrée du serveur BRiLaunch
+ * @author couderc1
+ * @version 1.0
+ */
 public class BRiLaunch {
 
 	private final static int PORT_PROG = 2600;
