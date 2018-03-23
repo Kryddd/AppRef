@@ -75,6 +75,9 @@ public class ServiceBRiProg extends ServiceBRi {
 			if (!error) {
 				menu();
 			}
+			else {
+				error = false;
+			}
 			try {
 				entree = in.readLine();
 			} catch (IOException e2) {
@@ -137,6 +140,7 @@ public class ServiceBRiProg extends ServiceBRi {
 				break;
 			default:
 				out.println("Commande invalide");
+				error = true;
 			}
 		}
 
@@ -161,7 +165,6 @@ public class ServiceBRiProg extends ServiceBRi {
 			out.println("Vous devez etre connecté pour effectuer cette opération!##Saisissez 1 pour vous connecter");
 			error = true;
 		} else {
-			error = false;
 
 			out.println("Saissisez votre nouvelle adresse de serveur FTP :");
 
@@ -175,7 +178,6 @@ public class ServiceBRiProg extends ServiceBRi {
 	 * @throws IOException
 	 */
 	private void login() throws IOException {
-		error = false;
 
 		out.println("Login :");
 		String login = in.readLine();
@@ -211,7 +213,6 @@ public class ServiceBRiProg extends ServiceBRi {
 	 * @throws IOException
 	 */
 	private void register() throws IOException {
-		error = false;
 
 		out.println("Création de compte####Login :");
 		String login = in.readLine();
@@ -243,7 +244,6 @@ public class ServiceBRiProg extends ServiceBRi {
 			out.println("Vous devez etre connecté pour effectuer cette opération!##Saisissez 1 pour vous connecter");
 			error = true;
 		} else {
-			error = false;
 
 			// Connexion au serveur FTP
 			out.println("Chemin de la classe à charger (Appuyer sur entrée si elle se trouve à la racine):");
@@ -284,7 +284,6 @@ public class ServiceBRiProg extends ServiceBRi {
 			out.println("Vous devez etre connecté pour effectuer cette opération!##Saisissez 1 pour vous connecter");
 			error = true;
 		} else {
-			error = false;
 
 			out.println(ServiceManager.servicesList() + "## Numero du service à supprimer :");
 
@@ -309,7 +308,6 @@ public class ServiceBRiProg extends ServiceBRi {
 	 * @throws IOException
 	 */
 	private void editService() throws IOException {
-		error = false;
 		if (progLogged == null) {
 			out.println("Vous devez etre connecté pour effectuer cette opération!##Saisissez 1 pour vous connecter");
 			error = true;
@@ -360,7 +358,6 @@ public class ServiceBRiProg extends ServiceBRi {
 	 * @throws NumberFormatException 
 	 */
 	private void changeStateService() throws NumberFormatException, IOException {
-		error = false;
 		if (progLogged == null) {
 			out.println("Vous devez etre connecté pour effectuer cette opération!##Saisissez 1 pour vous connecter");
 			error = true;
