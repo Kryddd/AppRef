@@ -64,6 +64,7 @@ public class ServiceManager {
 				return liste + "Aucun";
 			}
 
+			// Ajoute le nom, l'etat et le nom du programmeur des services 
 			for (int i = 0; i < servicesClasses.size(); i++) {
 				Class<? extends Service> s = servicesClasses.get(i);
 				String etatClasse = (servicesClassesActivated.get(i)) ? "Activé" : "Désactivé";

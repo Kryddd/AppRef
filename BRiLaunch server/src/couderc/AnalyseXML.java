@@ -45,11 +45,16 @@ public class AnalyseXML implements Service {
 			
 			out.println("Fichier XML à analyser :");
 			String fileName = in.readLine();
+			
+			// Récupère le fichier
 			InputStream streamXML = FtpCli.retrieveFileStream(fileName);
 			InputStreamReader readerXML = new InputStreamReader(streamXML);
 			
+			// TODO analyse
+			
+			// TODO envoyer bilan analyse
+			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
