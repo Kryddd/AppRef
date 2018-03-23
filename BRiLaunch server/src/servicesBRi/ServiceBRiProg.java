@@ -317,30 +317,39 @@ public class ServiceBRiProg extends ServiceBRi {
 			out.println("Remplacement de service##" + ServiceManager.servicesList() + "##Numéro du service à remplacer :");
 
 			int numServRempl = Integer.valueOf(in.readLine());
-
-			// Connexion au FTP
-			out.println("Chemin de la classe à remplacer (Appuyer sur entrée si elle se trouve à la racine) :");
-			String URLFileDir = "ftp://" + progLogged.getURLFtp() + in.readLine();
-			URLClassLoader urlcl = new URLClassLoader(new URL[] { new URL(URLFileDir) });
-
-			// Récuperation de la classe
-			Class<?> classLoaded = null;
-			try {
-				classLoaded = urlcl.loadClass(ServiceManager.getServiceName(numServRempl));
-			} catch (ClassNotFoundException e) {
-				out.println("Nom de classe invalide!##Mettrer la classe sur le FTP et reessayer en saisissant 4");
+			
+			// Vérifie si le service appartient au programmeur avant de le remplacer
+			if (ServiceManager.getServicePackage(numServRempl).equals(progLogged.getLogin())) {
+	
+				// Connexion au FTP
+				out.println("Chemin de la classe à remplacer (Appuyer sur entrée si elle se trouve à la racine) :");
+				String URLFileDir = "ftp://" + progLogged.getURLFtp() + in.readLine();
+				URLClassLoader urlcl = new URLClassLoader(new URL[] { new URL(URLFileDir) });
+	
+				// Récuperation de la classe
+				Class<?> classLoaded = null;
+				try {
+					classLoaded = urlcl.loadClass(ServiceManager.getServiceName(numServRempl));
+				} catch (ClassNotFoundException e) {
+					out.println("Nom de classe invalide!##Mettrer la classe sur le FTP et reessayer en saisissant 4");
+					error = true;
+				}
+	
+				// Remplacement du service dans le service manager
+				try {
+					ServiceManager.editService(classLoaded, numServRempl);
+				} catch (ClasseInvalideException e) {
+					out.println(e.getMessage() + "##Réessayer en saisissant 4");
+					error = true;
+				}
+	
+				urlcl.close();
+			}
+			else {
+				out.println("Vous ne pouvez pas remplacer de service dont vous n etes pas l auteur!##"
+						+ "Reessayer en saisissant 4");
 				error = true;
 			}
-
-			// Remplacement du service dans le service manager
-			try {
-				ServiceManager.editService(classLoaded, numServRempl);
-			} catch (ClasseInvalideException e) {
-				out.println(e.getMessage() + "##Réessayer en saisissant 4");
-				error = true;
-			}
-
-			urlcl.close();
 		}
 
 	}
